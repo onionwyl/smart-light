@@ -40,7 +40,7 @@ func monitorSensor(listener net.Listener, dbConn *gorm.DB) {
 	}
 }
 
-func handleSensor(conn net.Conn, db *gorm.DB) {
+func handleSensor(conn net.Conn, dbConn *gorm.DB) {
 	defer conn.Close()
 	addr := conn.RemoteAddr()
 
@@ -85,17 +85,17 @@ func handleSensor(conn net.Conn, db *gorm.DB) {
 		}
 		if envData.BtSensor1 != 0 {
 			var lastData model.EnvData
-			db.Last(&lastData)
-			db.Model(&lastData).Update("bt_sensor1", envData.BtSensor1)
+			dbConn.Last(&lastData)
+			dbConn.Model(&lastData).Update("bt_sensor1", envData.BtSensor1)
 		} else {
 			var count int
-			db.Table("env_data").Count(&count)
+			dbConn.Table("env_data").Count(&count)
 			if count == 0 {
-				db.Create(&envData)
+				dbConn.Create(&envData)
 				continue
 			}
 			var lastData model.EnvData
-			db.Last(&lastData)
+			dbConn.Last(&lastData)
 			if lastData.BtSensor1 == 0 {
 				continue
 			}
@@ -108,7 +108,7 @@ func handleSensor(conn net.Conn, db *gorm.DB) {
 			}
 			envData.LightBright = l.Bright
 			envData.LightCT = l.CT
-			db.Create(&envData)
+			dbConn.Create(&envData)
 		}
 	}
 }

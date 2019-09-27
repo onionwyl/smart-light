@@ -15,16 +15,16 @@ import (
 var DB *gorm.DB
 
 func main() {
+	if ok := db.Init(); !ok{
+		log.Fatal("db init error")
+		os.Exit(-1)
+	}
 	if ok := light.Init(); !ok{
 		log.Fatal("light init error")
 		os.Exit(-1)
 	}
 	if ok := sensor.Init(); !ok{
 		log.Fatal("sensor init error")
-		os.Exit(-1)
-	}
-	if ok := db.Init(); !ok{
-		log.Fatal("db init error")
 		os.Exit(-1)
 	}
 	go detectUserAction()
